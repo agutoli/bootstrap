@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Template &middot; Bootstrap</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link href="bootstrap.css" rel="stylesheet">
+    <link href="docs/assets/css/bootstrap-responsive.css" rel="stylesheet">
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+
+    <div class="container">
+
+      <hr>
+
+      <div class="row-fluid">
+        
+        <div class="span4">
+          <div class="scrollbox vertical">
+            <div class="scrollbox-control scrollbox-control-prev">
+              <a href="#" class="btn"><i class="icon-chevron"></i></a>
+            </div>
+            <div class="scrollbox-inner">
+              <ul>
+                <li>
+                  <h3>Heading</h3>
+                  <p>Donec id elit non mi porta gravida at eget metus</p>
+                </li>
+                <li>
+                  <h3>Heading</h3>
+                  <p>Donec id elit non mi porta gravida at eget metus</p>
+                </li>
+              </ul>
+            </div>
+            <div class="scrollbox-control scrollbox-control-next">
+              <a href="#" class="btn"><i class="icon-chevron"></i></a>
+            </div>
+          </div>
+        </div>
+
+        <div class="span4">
+          <h2>Heading</h2>
+          <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
+          <p><a class="btn" href="#">View details &raquo;</a></p>
+       </div>
+
+        <div class="span4">
+          <div id="my-scrollbox" class="scrollbox horizontal">
+            <div class="scrollbox-control scrollbox-control-prev">
+              <a href="#" class="btn"><i class="icon-chevron-left"></i></a>
+            </div>
+            <div class="scrollbox-inner">
+              <ul>
+                <li>
+                  <h3>Heading</h3>
+                  <p>Donec id elit non mi porta gravida at eget metus</p>
+                </li>
+                <li>
+                  <h3>Heading</h3>
+                  <p>Donec id elit non mi porta gravida at eget metus</p>
+                </li>
+              </ul>
+            </div>
+            <div class="scrollbox-control scrollbox-control-next">
+              <a href="#" class="btn"><i class="icon-chevron-right"></i></a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <hr>
+
+    </div> <!-- /container -->
+
+    <script src="docs/assets/js/jquery.js"></script>
+    <script src="docs/assets/js/bootstrap-transition.js"></script>
+    <script src="docs/assets/js/bootstrap-scrollbox.js"></script>
+    <script>
+      $(function(){
+      $('#my-scrollbox').scrollbox();
+      });
+    </script>
+  </body>
+</html>

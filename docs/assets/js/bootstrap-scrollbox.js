@@ -28,37 +28,96 @@
   * =============================== */
 
   var scrollbox = function (element, options) {
-    this.init('scrollbox', element, options)
+    this.init('scrollbox', element, options);
   }
 
   scrollbox.prototype = {
 
-    constructor: scrollbox
+    constructor: scrollbox,
 
-  , init: function (type, element, options) {
-      var eventIn
-        , eventOut
+    init: function (type, element, options) {
+      
+      var _this = this;
 
-      this.type = type
-      this.$element = $(element)
-      this.options = this.getOptions(options)
-      this.enabled = true
+      this.type = type;
+      this.$element = $(element);
+      this.$scroll_inner = $('.scrollbox-inner', this.$element);
+      this.$button_prev = $('.scrollbox-control-prev', this.$element);
+      this.$button_next = $('.scrollbox-control-next', this.$element);
+      this.options = this.getOptions(options);
+      this.enabled = true;
 
-      if (this.options.trigger == 'click') {
-        this.$element.on('click.' + this.type, this.options.selector, $.proxy(this.toggle, this))
-      } else if (this.options.trigger != 'manual') {
-        eventIn = this.options.trigger == 'hover' ? 'mouseenter' : 'focus'
-        eventOut = this.options.trigger == 'hover' ? 'mouseleave' : 'blur'
-        this.$element.on(eventIn + '.' + this.type, this.options.selector, $.proxy(this.enter, this))
-        this.$element.on(eventOut + '.' + this.type, this.options.selector, $.proxy(this.leave, this))
+      //events
+      this.$button_prev.on('click.' + this.type, this.options.selector, $.proxy(this.prev, this));
+      this.$button_next.on('click.' + this.type, this.options.selector, $.proxy(this.next, this));
+
+      this.rows = $('ul li', this.$scroll_inner); 
+      this.corrent_row = 0;
+
+      this.sum_rows_height = 0;
+      this.num_rows = this.rows.length;
+      this.ul_height = this.$scroll_inner.find('ul').height();
+
+      $.each(this.rows, function(i, el){
+         _this.sum_rows_height += $(el).height(); 
+      });
+
+      this.inner_height = this.$scroll_inner.height();
+      this.line_height = (this.ul_height - this.sum_rows_height) / (this.num_rows + 1);
+      this.scroll_height = 0;
+      this.$button_prev.find('.btn').addClass('disabled');
+    },
+
+    next: function() {
+      var _this = this;
+      var row_corrent_height = 0;
+      for(var offset = this.corrent_row; offset < this.num_rows; offset++) {
+        var row_height = $(this.rows[offset]).height();
+        if (this.inner_height > (row_corrent_height + row_height + this.line_height) ) {
+          row_corrent_height += row_height + this.line_height;
+          this.scroll_height += row_height + this.line_height;
+          this.corrent_row = offset;
+        }
       }
 
-      this.options.selector ?
-        (this._options = $.extend({}, this.options, { trigger: 'manual', selector: '' })) :
-        this.fixTitle()
-    }
+      var diff_end_scroller = (this.ul_height - this.scroll_height) - this.inner_height;
+      if (diff_end_scroller < 0) {
+        this.scroll_height += diff_end_scroller;
+        this.corrent_row = this.num_rows - 1;
+        this.$button_next.find('.btn').addClass('disabled');
+      }
 
-  , getOptions: function (options) {
+      var prev = this.$button_prev.find('.btn');
+      if (prev.hasClass('disabled')) prev.removeClass('disabled');
+
+      this.$scroll_inner.find('ul').animate({top: '-'+ _this.scroll_height});
+    },
+
+    prev: function() {
+      var _this = this;
+      var row_corrent_height = 0;
+
+      for(var offset = this.corrent_row; offset >= 0; offset--) {
+        var row_height = $(this.rows[offset]).height();
+        if (this.inner_height > (row_corrent_height + row_height + this.line_height) ) {
+          row_corrent_height += row_height + this.line_height;
+          this.scroll_height -= row_height + this.line_height;
+        }
+      }
+
+      if (this.scroll_height <= 0) {
+        this.scroll_height = 0;
+        this.corrent_row = 0;
+        this.$button_prev.find('.btn').addClass('disabled');
+      }
+      
+      var next = this.$button_next.find('.btn');
+      if (next.hasClass('disabled')) next.removeClass('disabled'); 
+
+      this.$scroll_inner.find('ul').animate({top: '-'+ _this.scroll_height}, this.options.delay);
+    },
+
+    getOptions: function (options) {
       options = $.extend({}, $.fn[this.type].defaults, options, this.$element.data())
 
       if (options.delay && typeof options.delay == 'number') {
@@ -69,181 +128,27 @@
       }
 
       return options
-    }
+    },
 
-  , enter: function (e) {
-      var self = $(e.currentTarget)[this.type](this._options).data(this.type)
-
-      if (!self.options.delay || !self.options.delay.show) return self.show()
-
-      clearTimeout(this.timeout)
-      self.hoverState = 'in'
-      this.timeout = setTimeout(function() {
-        if (self.hoverState == 'in') self.show()
-      }, self.options.delay.show)
-    }
-
-  , leave: function (e) {
-      var self = $(e.currentTarget)[this.type](this._options).data(this.type)
-
-      if (this.timeout) clearTimeout(this.timeout)
-      if (!self.options.delay || !self.options.delay.hide) return self.hide()
-
-      self.hoverState = 'out'
-      this.timeout = setTimeout(function() {
-        if (self.hoverState == 'out') self.hide()
-      }, self.options.delay.hide)
-    }
-
-  , show: function () {
-      var $tip
-        , inside
-        , pos
-        , actualWidth
-        , actualHeight
-        , placement
-        , tp
-
-      if (this.hasContent() && this.enabled) {
-        $tip = this.tip()
-        this.setContent()
-
-        if (this.options.animation) {
-          $tip.addClass('fade')
-        }
-
-        placement = typeof this.options.placement == 'function' ?
-          this.options.placement.call(this, $tip[0], this.$element[0]) :
-          this.options.placement
-
-        inside = /in/.test(placement)
-
-        $tip
-          .detach()
-          .css({ top: 0, left: 0, display: 'block' })
-          .insertAfter(this.$element)
-
-        pos = this.getPosition(inside)
-
-        actualWidth = $tip[0].offsetWidth
-        actualHeight = $tip[0].offsetHeight
-
-        switch (inside ? placement.split(' ')[1] : placement) {
-          case 'bottom':
-            tp = {top: pos.top + pos.height, left: pos.left + pos.width / 2 - actualWidth / 2}
-            break
-          case 'top':
-            tp = {top: pos.top - actualHeight, left: pos.left + pos.width / 2 - actualWidth / 2}
-            break
-          case 'left':
-            tp = {top: pos.top + pos.height / 2 - actualHeight / 2, left: pos.left - actualWidth}
-            break
-          case 'right':
-            tp = {top: pos.top + pos.height / 2 - actualHeight / 2, left: pos.left + pos.width}
-            break
-        }
-
-        $tip
-          .offset(tp)
-          .addClass(placement)
-          .addClass('in')
-      }
-    }
-
-  , setContent: function () {
-      var $tip = this.tip()
-        , title = this.getTitle()
-
-      $tip.find('.scrollbox-inner')[this.options.html ? 'html' : 'text'](title)
-      $tip.removeClass('fade in top bottom left right')
-    }
-
-  , hide: function () {
-      var that = this
-        , $tip = this.tip()
-
-      $tip.removeClass('in')
-
-      function removeWithAnimation() {
-        var timeout = setTimeout(function () {
-          $tip.off($.support.transition.end).detach()
-        }, 500)
-
-        $tip.one($.support.transition.end, function () {
-          clearTimeout(timeout)
-          $tip.detach()
-        })
-      }
-
-      $.support.transition && this.$tip.hasClass('fade') ?
-        removeWithAnimation() :
-        $tip.detach()
-
-      return this
-    }
-
-  , fixTitle: function () {
-      var $e = this.$element
-      if ($e.attr('title') || typeof($e.attr('data-original-title')) != 'string') {
-        $e.attr('data-original-title', $e.attr('title') || '').removeAttr('title')
-      }
-    }
-
-  , hasContent: function () {
-      return this.getTitle()
-    }
-
-  , getPosition: function (inside) {
-      return $.extend({}, (inside ? {top: 0, left: 0} : this.$element.offset()), {
-        width: this.$element[0].offsetWidth
-      , height: this.$element[0].offsetHeight
-      })
-    }
-
-  , getTitle: function () {
-      var title
-        , $e = this.$element
-        , o = this.options
-
-      title = $e.attr('data-original-title')
-        || (typeof o.title == 'function' ? o.title.call($e[0]) :  o.title)
-
-      return title
-    }
-
-  , tip: function () {
-      return this.$tip = this.$tip || $(this.options.template)
-    }
-
-  , validate: function () {
+    validate: function () {
       if (!this.$element[0].parentNode) {
         this.hide()
         this.$element = null
         this.options = null
       }
-    }
+    },
 
-  , enable: function () {
+    enable: function () {
       this.enabled = true
-    }
+    },
 
-  , disable: function () {
+    disable: function () {
       this.enabled = false
-    }
+    },
 
-  , toggleEnabled: function () {
-      this.enabled = !this.enabled
-    }
-
-  , toggle: function (e) {
-      var self = $(e.currentTarget)[this.type](this._options).data(this.type)
-      self[self.tip().hasClass('in') ? 'hide' : 'show']()
-    }
-
-  , destroy: function () {
+    destroy: function () {
       this.hide().$element.off('.' + this.type).removeData(this.type)
     }
-
   }
 
 
@@ -255,22 +160,17 @@
       var $this = $(this)
         , data = $this.data('scrollbox')
         , options = typeof option == 'object' && option
-      if (!data) $this.data('scrollbox', (data = new scrollbox(this, options)))
-      if (typeof option == 'string') data[option]()
+      if (!data) $this.data('scrollbox', (data = new scrollbox(this, options)));
+      if (typeof option == 'string') data[option]();
     })
   }
 
-  $.fn.scrollbox.Constructor = scrollbox
+  $.fn.scrollbox.Constructor = scrollbox;
 
   $.fn.scrollbox.defaults = {
-    animation: true
-  , placement: 'top'
-  , selector: false
-  , template: '<div class="scrollbox"><div class="scrollbox-arrow"></div><div class="scrollbox-inner"></div></div>'
-  , trigger: 'hover'
-  , title: ''
-  , delay: 0
-  , html: false
-  }
+    animation: true,
+    selector: false,
+    delay: 'slow'
+  };
 
 }(window.jQuery);

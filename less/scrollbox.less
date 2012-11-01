@@ -9,46 +9,65 @@
   overflow: hidden;
 
   ul, ol {
+    position: absolute;
     list-style: none outside none;
+    margin: 0 25px;
   }
+}
 
-  &.vertical{
-    .scrollbox-control {
-      &.scrollbox-control-prev {
-        .btn .icon-chevron {
-          background-image: url("@{iconSpritePath}");
-          background-position: -288px -120px;
-          background-repeat: no-repeat;
-        }
-      }
-      &.scrollbox-control-next {
-        .btn .icon-chevron {
-          background-image: url("@{iconSpritePath}");
-          background-position: -313px -119px;
-          background-repeat: no-repeat;
-        }
-      }
-      .btn {
-        display: block;
+.scrollbox.vertical{
+  .scrollbox-control {
+    &.scrollbox-control-prev {
+      .btn .icon-chevron {
+        background-image: url("@{iconSpritePath}");
+        background-position: -288px -120px;
+        background-repeat: no-repeat;
       }
     }
-  }
-
-  &.horizontal{
-    height: 230px;
-    .scrollbox-inner{
-      float: left;
-    }
-    .scrollbox-control {
-      float: left;
-      height: 100%;
-      .btn {
-        height: 95%;
-        float: left;
+    &.scrollbox-control-next {
+      .btn .icon-chevron {
+        background-image: url("@{iconSpritePath}");
+        background-position: -313px -119px;
+        background-repeat: no-repeat;
       }
+    }
+    .btn.disabled .icon-chevron, 
+    .btn[disabled] .icon-chevron {
+     .opacity(10); 
+    }
+    .btn {
+      display: block;
+    }
+    button.btn {
+      width: 100%;
     }
   }
 }
+
+.scrollbox.vertical.small{
+  .scrollbox-inner{
+    position: relative;
+    height: 200px;
+    overflow: hidden;
+    margin: 10px 0;
+  }
+}
+
+.scrollbox.horizontal{
+  height: 230px;
+  .scrollbox-inner{
+    float: left;
+  }
+  .scrollbox-control {
+    float: left;
+    height: 100%;
+    .btn {
+      height: 95%;
+      float: left;
+    }
+  }
+}
+
 
 
 .modal-backdrop,

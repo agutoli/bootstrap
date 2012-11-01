@@ -4974,7 +4974,9 @@ a.badge:hover {
 }
 .scrollbox ul,
 .scrollbox ol {
+  position: absolute;
   list-style: none outside none;
+  margin: 0 25px;
 }
 .scrollbox.vertical .scrollbox-control.scrollbox-control-prev .btn .icon-chevron {
   background-image: url("img/glyphicons-halflings.png");
@@ -4986,8 +4988,22 @@ a.badge:hover {
   background-position: -313px -119px;
   background-repeat: no-repeat;
 }
+.scrollbox.vertical .scrollbox-control .btn.disabled .icon-chevron,
+.scrollbox.vertical .scrollbox-control .btn[disabled] .icon-chevron {
+  opacity: 0.1;
+  filter: alpha(opacity=10);
+}
 .scrollbox.vertical .scrollbox-control .btn {
   display: block;
+}
+.scrollbox.vertical .scrollbox-control button.btn {
+  width: 100%;
+}
+.scrollbox.vertical.small .scrollbox-inner {
+  position: relative;
+  height: 200px;
+  overflow: hidden;
+  margin: 10px 0;
 }
 .scrollbox.horizontal {
   height: 230px;

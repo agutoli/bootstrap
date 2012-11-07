@@ -37,6 +37,7 @@
 
     init: function (type, element, options) {
 
+      var _this = this;
       this.type = type;
 
       //selectors
@@ -55,9 +56,6 @@
       this.$button_prev.on('click.' + this.type, this.options.selector, $.proxy(this.prev, this));
       this.$button_next.on('click.' + this.type, this.options.selector, $.proxy(this.next, this));
 
-      this.smartEndAdjustment = 0;
-      this.corrent_index_row = 0;
-      this.scroll_position = 0;
       this.num_rows = this.$scroll_rows.length;
       this.ul_height = this.$scroll_ul.height();
       this.inner_height = this.$scroll_inner.height();
@@ -66,103 +64,87 @@
       //disabled previous button 
       this.disabledPrevButton();
       this.updateCorrentIndex();
+
+      var scroll_inner_top = this.$scroll_inner.offset().top;
+      var scroll_inner_height = this.$scroll_inner.height();
+
+      this.$scroll_rows.each(function(index, el){
+        var row = $(el);
+        var top = row.offset().top;
+        if (index == (_this.num_rows-1) ) {
+          var offset_bottom_inner = scroll_inner_top + _this.inner_height;
+          var offset_bottom_last_row = top + row.height();
+          var scroll_top = offset_bottom_inner - offset_bottom_last_row - _this.line_height;
+          _this.$element.data('index-' + index, scroll_top);
+        } else {
+          var scroll_top = _this.$scroll_ul.offset().top - top + _this.line_height;
+          _this.$element.data('index-' + index, scroll_top);
+        }
+      });
     },
 
     corrent: 0,
 
     next: function() {
-
-      this.corrent++;
-
-      var scroll_inner_offset = this.$scroll_inner.offset();
-      var $corrent_row = $(this.$scroll_rows[this.corrent]);
-      var scroll_row_offset = $corrent_row.offset();
-
-      if (this.corrent == (this.num_rows-1) ) {
-        var offset_inner_bottom = scroll_inner_offset.top + this.$scroll_inner.height();
-        console.log(offset_inner_bottom);
-        //this.scroll_position += offset_inner_bottom - $corrent_row.height() + this.line_height;
-        //var t = scroll_row_offset.top + $corrent_row.height() + this.line_height;
-        //console.log(scroll_inner_offset.top, scroll_row_offset.top, t);
-      } else {
-        this.scroll_position += (scroll_inner_offset.top - scroll_row_offset.top) + this.line_height;
-      }
-
+      this.getNextIndex();
       this.enabledPrevButton();
       this.moveVerticalScroller();
-      this.updateCorrentIndex();
-
-
-
-
-      /*var sum_row_height = 0;
-      
-      if (this.corrent_index_row > 0) {
-        this.corrent_index_row++;
-      }
-
-      for(var offset = this.corrent_index_row; offset < this.num_rows; offset++) {
-        var row_height = $(this.$scroll_rows[offset]).height();
-        if ( this.checkIfSumOfLinesFitOnTheDisplay(sum_row_height, row_height) ) {
-          sum_row_height += this.sumHeightAndLineHeight(row_height);
-          this.scroll_position += this.sumHeightAndLineHeight(row_height);
-          this.corrent_index_row = offset;
-        }
-      }
-
-      this.smartEndAdjustment = (this.ul_height - this.scroll_position) - this.inner_height;
-
-      if (this.smartEndAdjustment < 0) {
-        this.scroll_position += this.smartEndAdjustment;
-        this.corrent_index_row++;
-        this.disabledNextButton();
-      }
-
-      this.enabledPrevButton();
-      this.moveVerticalScroller();*/
+      this.updateCorrentIndex();//enabled
     },
 
     prev: function() {
-     /*
-     var sum_row_height = 0;
-
-      for(var offset = this.corrent_index_row; offset >= 0; offset--) {
-        var row_height = $(this.$scroll_rows[offset]).height();
-        if ( this.checkIfSumOfLinesFitOnTheDisplay(sum_row_height, row_height) ) {
-          sum_row_height += this.sumHeightAndLineHeight(row_height);
-          if (this.corrent_index_row === (this.num_rows - 1) ) {
-            this.scroll_position += this.smartEndAdjustment;
-            break;
-          } else {
-            this.scroll_position -= this.sumHeightAndLineHeight(row_height);
-          }
-        }
-      }
-    
-      if (this.scroll_position <= 0) {
-        this.scroll_position = 0;
-        this.corrent_index_row = 0;
-        this.disabledPrevButton();
-      }
-
+      this.getPrevIndex();
       this.enabledNextButton();
-      this.moveVerticalScroller();*/
+      this.moveVerticalScroller();
     },
 
-    updateCorrentIndex: function() {
-      
-      var _this = this;
+    getPrevIndex: function() {
       var sum_row_height = 0;
+      var smarty_ajustement = 0;
+      var last_row = false;
+     
+      if (this.corrent == (this.num_rows-1)) {
+        last_row = true;
+      }
+      
+      if (this.corrent > 0 && !last_row) {
+        this.corrent--;
+      }
 
-      for(var offset = this.corrent; offset < this.num_rows; offset++) {
+      for(var offset = this.corrent; offset >= 0; offset--) {
         var row_height = $(this.$scroll_rows[offset]).height();
-        
-        if ( _this.checkIfSumOfLinesFitOnTheDisplay(sum_row_height, row_height) ) {
-          sum_row_height += row_height + _this.line_height;
-          _this.corrent = offset;
+        if ( this.checkIfSumOfLinesFitOnTheDisplay(sum_row_height, row_height) ) {
+          sum_row_height += row_height + this.line_height;
+          this.corrent = offset;
+        } else if ( last_row && this.checkIfSumOfLinesFitOnTheDisplay(smarty_ajustement, row_height) ) {
+          smarty_ajustement += row_height + this.line_height;
+          this.corrent--;
         }
       }
-      console.log('index: ',_this.corrent);
+    },
+
+    getNextIndex: function() {
+      var sum_row_height = 0;
+      for(var offset = this.corrent; offset < this.num_rows; offset++) {
+        var row_height = $(this.$scroll_rows[offset]).height();
+        if ( this.checkIfSumOfLinesFitOnTheDisplay(sum_row_height, row_height) ) {
+          sum_row_height += row_height + this.line_height;
+          this.corrent = offset;
+        }
+      }
+    },
+
+    updateCorrentIndex: function(scroll) {
+      
+      var sum_row_height = 0;
+      
+      for(var offset = this.corrent; offset < this.num_rows; offset++) {
+        var row_height = $(this.$scroll_rows[offset]).height();
+        if ( this.checkIfSumOfLinesFitOnTheDisplay(sum_row_height, row_height) ) {
+          sum_row_height += row_height + this.line_height;
+          this.corrent = offset;
+        }
+      }
     },
 
     checkIfSumOfLinesFitOnTheDisplay: function(sum_row_height, row_height) {
@@ -172,21 +154,34 @@
       return false;
     },
 
-    sumHeightAndLineHeight: function(height) {
-      return (height + this.line_height);
-    },
-
     moveVerticalScroller: function() {
       
       if (!this.enabled) {
         return false;
       }
 
-      var scroll_top = this.scroll_position;
+      if (this.corrent == (this.num_rows -1) ) {
+        this.disabledNextButton();//disabled
+      }
+
+      if (this.corrent == 0) {
+        this.disabledPrevButton();//disabled
+      }
+
+      var limit_bottom_allowed = this.$scroll_inner.height() - this.ul_height;
+
+      var scroll_top = this.$element.data('index-'+ this.corrent);
+      if ( scroll_top < limit_bottom_allowed ) {
+        scroll_top = limit_bottom_allowed;   
+      }
 
       this.$scroll_ul.animate({
         top: scroll_top
       }, this.options.delay, $.proxy(this.options.completeAnimation, this, scroll_top));
+
+      if (this.corrent == 0) {
+        this.updateCorrentIndex();
+      }
     },
 
     getOptions: function (options) {
@@ -267,7 +262,6 @@
     animation: true,
     selector: false,
     delay: 'fast',
-    onClick: function(){},
     completeAnimation: function(){}
   };
 

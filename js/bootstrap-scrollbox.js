@@ -1,9 +1,9 @@
 /* ===========================================================
- * bootstrap-scrollbox.js v2.2.1
+ * bootstrap-scrollbox.js
  * http://twitter.github.com/bootstrap/javascript.html#scrollboxs
  * Inspired by the original jQuery.tipsy by Jason Frame
  * ===========================================================
- * Copyright 2012 Twitter, Inc.
+ * Copyright 2012 Bruno Agutoli <bruno.agutoli@gmail.com>.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.

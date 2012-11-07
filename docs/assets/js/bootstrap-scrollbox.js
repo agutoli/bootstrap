@@ -66,18 +66,20 @@
       this.updateCorrentIndex();
 
       var scroll_inner_top = this.$scroll_inner.offset().top;
-      var scroll_inner_height = this.$scroll_inner.height();
 
       this.$scroll_rows.each(function(index, el){
-        var row = $(el);
-        var top = row.offset().top;
-        if (index == (_this.num_rows-1) ) {
+        
+        var row = $(el),
+            top = row.offset().top,
+            scroll_top;
+        
+        if (index === (_this.num_rows-1) ) {
           var offset_bottom_inner = scroll_inner_top + _this.inner_height;
           var offset_bottom_last_row = top + row.height();
-          var scroll_top = offset_bottom_inner - offset_bottom_last_row - _this.line_height;
+          scroll_top = offset_bottom_inner - offset_bottom_last_row - _this.line_height;
           _this.$element.data('index-' + index, scroll_top);
         } else {
-          var scroll_top = _this.$scroll_ul.offset().top - top + _this.line_height;
+          scroll_top = _this.$scroll_ul.offset().top - top + _this.line_height;
           _this.$element.data('index-' + index, scroll_top);
         }
       });
@@ -103,7 +105,7 @@
       var smarty_ajustement = 0;
       var last_row = false;
      
-      if (this.corrent == (this.num_rows-1)) {
+      if (this.corrent === (this.num_rows-1)) {
         last_row = true;
       }
       
@@ -134,7 +136,7 @@
       }
     },
 
-    updateCorrentIndex: function(scroll) {
+    updateCorrentIndex: function() {
       
       var sum_row_height = 0;
       
@@ -160,11 +162,11 @@
         return false;
       }
 
-      if (this.corrent == (this.num_rows -1) ) {
+      if (this.corrent === (this.num_rows -1) ) {
         this.disabledNextButton();//disabled
       }
 
-      if (this.corrent == 0) {
+      if (this.corrent === 0) {
         this.disabledPrevButton();//disabled
       }
 
@@ -179,7 +181,7 @@
         top: scroll_top
       }, this.options.delay, $.proxy(this.options.completeAnimation, this, scroll_top));
 
-      if (this.corrent == 0) {
+      if (this.corrent === 0) {
         this.updateCorrentIndex();
       }
     },

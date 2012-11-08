@@ -67,6 +67,9 @@
     // carousel demo
     $('#myCarousel').carousel()
 
+    //scrollbox demo
+    $('#myScrollbox').scrollbox();
+
     // javascript build logic
     var inputsComponent = $("#components.download input")
       , inputsPlugin = $("#plugins.download input")

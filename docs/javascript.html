@@ -99,6 +99,7 @@
           <li><a href="#carousel"><i class="icon-chevron-right"></i> Carousel</a></li>
           <li><a href="#typeahead"><i class="icon-chevron-right"></i> Typeahead</a></li>
           <li><a href="#affix"><i class="icon-chevron-right"></i> Affix</a></li>
+          <li><a href="#scrollbox"><i class="icon-chevron-right"></i> Scrollbox</a></li>
         </ul>
       </div>
       <div class="span9">
@@ -1694,6 +1695,119 @@ $('[data-spy="affix"]').each(function () {
         </section>
 
 
+          <!-- Scrollbox
+          ================================================== -->
+          <section id="scrollbox">
+            <div class="page-header">
+              <h1>Scrollbox <small>bootstrap-scrollbox.js</small></h1>
+            </div>
+
+            <h2>Example</h2>
+            <p>Box with scrollers controlled by arrows.</p>
+
+
+          <div id="myScrollbox" class="scrollbox vertical small">
+            <div class="scrollbox-control scrollbox-control-prev">
+              <button class="btn"><i class="icon-chevron"></i></button>
+            </div>
+            <div class="scrollbox-inner">
+              <ul>
+                <li>
+                  <h3>Heading 1</h3>
+                  <p>Donec id elit non mi porta gravida at eget metus</p>
+                </li>
+                <li>
+                  <h4>Heading 2</h4>
+                  <p>Donec id elit non mi porta gravida at eget metus</p>
+                </li>
+                <li>
+                  <div class="span2">
+                    <img class="img-rounded" src="http://placehold.it/100x100" />
+                  </div>
+                  <div class="span5">
+                  <h1>Heading 3</h1>
+                  <p>Donec id elit non mi porta gravida at eget metus</p>
+                  </div>
+                </li>
+                <li>
+                  <h3>Heading 4</h3>
+                  <p>Donec id elit non mi porta gravida at eget metus</p>
+                </li>
+                <li>
+                  <h5>Heading 5</h5>
+                  <p>Donec id elit non mi porta gravida at eget metus</p>
+                </li>
+                <li>
+                  <h3>Heading 6</h3>
+                  <p>Donec id elit non mi porta gravida at eget metus</p>
+                </li>
+                <li>
+                  <h3>Heading 7</h3>
+                  <p>Donec id elit non mi porta gravida at eget metus</p>
+                </li>
+                <li>
+                  <h3>Heading 8</h3>
+                  <p>Donec id elit non mi porta gravida at eget metus</p>
+                </li>
+                <li>
+                  <h5>Heading 9</h5>
+                  <p>Donec id elit non mi porta gravida at eget metus</p>
+                </li>
+                <li>
+                  <h3>Heading 10</h3>
+                  <p>Donec id elit non mi porta gravida at eget metus</p>
+                </li>
+                <li>
+                  <h3>Heading 11</h3>
+                  <p>Donec id elit non mi porta gravida at eget metus</p>
+                </li>
+              </ul>
+            </div>
+            <div class="scrollbox-control scrollbox-control-next">
+              <button class="btn"><i class="icon-chevron"></i></button>
+            </div>
+          </div>
+
+
+
+            <hr class="bs-docs-separator">
+
+            <h2>Usage</h2>
+
+            <p>Call the scrollbox plugin via JavaScript:</p>
+            <pre class="prettyprint linenums">$('#myScrollbox').scrollbox();</pre>
+
+            <h3>Methods</h3>
+            <h4>.affix('refresh')</h4>
+            <p>When using affix in conjunction with adding or removing of elements from the DOM, you'll want to call the refresh method:</p>
+<pre class="prettyprint linenums">
+$('[data-spy="affix"]').each(function () {
+  $(this).affix('refresh')
+});
+</pre>
+          <h3>Options</h3>
+          <p>Options can be passed via data attributes or JavaScript. For data attributes, append the option name to <code>data-</code>, as in <code>data-offset-top="200"</code>.</p>
+          <table class="table table-bordered table-striped">
+            <thead>
+             <tr>
+               <th style="width: 100px;">Name</th>
+               <th style="width: 100px;">type</th>
+               <th style="width: 50px;">default</th>
+               <th>description</th>
+             </tr>
+            </thead>
+            <tbody>
+             <tr>
+               <td>offset</td>
+               <td>number | function | object</td>
+               <td>10</td>
+               <td>Pixels to offset from screen when calculating position of scroll. If a single number is provide, the offset will be applied in both top and left directions. To listen for a single direction, or multiple unique offsets, just provided an object <code>offset: { x: 10 }</code>. Use a function when you need to dynamically provide an offset (useful for some responsive designs).</td>
+             </tr>
+            </tbody>
+          </table>
+        </section>
+
+
 
       </div>
     </div>
@@ -1741,6 +1855,7 @@ $('[data-spy="affix"]').each(function () {
     <script src="assets/js/bootstrap-carousel.js"></script>
     <script src="assets/js/bootstrap-typeahead.js"></script>
     <script src="assets/js/bootstrap-affix.js"></script>
+    <script src="assets/js/bootstrap-scrollbox.js"></script>
     <script src="assets/js/application.js"></script>
 
 
